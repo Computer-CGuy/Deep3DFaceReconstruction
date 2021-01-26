@@ -4,7 +4,7 @@ import numpy as np
 from scipy.io import loadmat
 import platform
 
-is_windows = platform.system() == "Windows"
+is_windows = True
 
 if not is_windows:
 	from renderer import mesh_renderer
