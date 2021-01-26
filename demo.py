@@ -12,7 +12,7 @@ from utils import *
 from face_decoder import Face3D
 from options import Option
 
-is_windows = platform.system() == "Windows"
+is_windows = True
 
 def parse_args():
 
