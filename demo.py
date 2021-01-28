@@ -37,6 +37,25 @@ def restore_weights(sess,opt):
 	saver = tf.train.Saver(var_list = var_list)
 	saver.restore(sess,opt.pretrain_weights)
 
+
+"""
+	Files in the input directory are arranged as 
+	Folder1
+		Folder1_A0
+		Folder1_A1
+		Folder1_A2
+		....
+	Folder2
+		Folder2_A0
+		Folder2_A1
+		Folder2_A2
+		...
+	Folder3
+		Folder3_A0
+		Folder3_A1
+		Folder3_A2
+		...
+"""
 def demo():
 	# input and output folder
 	args = parse_args()
@@ -101,7 +120,10 @@ def demo():
 					n += 1
 					print(n)
 					# load images and corresponding 5 facial landmarks
-					img,lm = load_img(file,file.replace('png','txt').replace('jpg','txt'))
+					lm_file =file.replace('JPG','txt')
+					if(not os.path.isfile(lm_file)):
+						continue
+					img,lm = load_img(file,lm_file)
 					# preprocess input image
 					input_img,lm_new,transform_params = align_img(img,lm,lm3D)
 
@@ -119,10 +141,10 @@ def demo():
 						recon_img_ = np.squeeze(recon_img_, (0))
 
 					# save output files
-					if not is_windows:
-						savemat(os.path.join(save_path,file.split(os.path.sep)[-1].replace('.png','.mat').replace('jpg','mat')),{'cropped_img':input_img[:,:,::-1],'recon_img':recon_img_,'coeff':coeff_,\
-							'face_shape':face_shape_,'face_texture':face_texture_,'face_color':face_color_,'lm_68p':landmarks_2d_,'lm_5p':lm_new})
-					save_obj(os.path.join(save_path,file.split(os.path.sep)[-1].replace('.png','_mesh.obj').replace('.jpg','_mesh.obj')),face_shape_,tri_,np.clip(face_color_,0,255)/255) # 3D reconstruction face (in canonical view)
+					# if not is_windows:
+						# savemat(os.path.join(save_path,file.split(os.path.sep)[-1].replace('.png','.mat').replace('jpg','mat')),{'cropped_img':input_img[:,:,::-1],'recon_img':recon_img_,'coeff':coeff_,\
+						# 	'face_shape':face_shape_,'face_texture':face_texture_,'face_color':face_color_,'lm_68p':landmarks_2d_,'lm_5p':lm_new})
+					save_obj(file.replace('.JPG','_mesh.obj'),face_shape_,tri_,np.clip(face_color_,0,255)/255) # 3D reconstruction face (in canonical view)
 
 if __name__ == '__main__':
 	demo()
